@@ -12,8 +12,20 @@
 
 ## 安装
 
+### 方式一：通过 Claude Code 斜杠命令自动安装（推荐）
+
+如果你安装了 [install-skill](https://github.com/idsj/install-skill) 技能，直接在 Claude Code 中运行：
+
+```
+/install-skill https://github.com/idsj/image_skills
+```
+
+重启 Claude Code 后即可使用 `/text2image` 和 `/image2image`。
+
+### 方式二：手动克隆
+
 ```bash
-git clone <repo-url> image_skills
+git clone https://github.com/idsj/image_skills.git image_skills
 cd image_skills
 pip install -r requirements.txt
 cp .env.example .env
