@@ -18,6 +18,9 @@ output_videos/
 *.jpeg
 *.mp4
 
+# 图生视频任务记录（含 task_id）
+tasks.log
+
 # 系统文件
 .DS_Store
 Thumbs.db

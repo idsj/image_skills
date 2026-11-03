@@ -1,9 +1,10 @@
 # image_skills
 
-两个独立的 AI 图像技能，支持**命令行直接使用**和**作为 Claude Code 斜杠命令**使用。
+三个独立的 AI 图像技能，支持**命令行直接使用**和**作为 Claude Code 斜杠命令**使用。
 
 - `text2image` — 文本描述 → AI 生成图片
 - `image2image` — 参考图片 + 描述 → AI 编辑图片
+- `image2video` — 图片 + 动态描述 → 几秒的动态视频（异步任务，默认 MiniMax-H3 2K）
 
 ## 环境要求
 
@@ -20,7 +21,7 @@
 /install-skill https://github.com/idsj/image_skills
 ```
 
-重启 Claude Code 后即可使用 `/text2image` 和 `/image2image`。
+重启 Claude Code 后即可使用文生图和图片编辑能力。
 
 ### 方式二：手动克隆
 
@@ -64,6 +65,21 @@ python image2image/image2image.py photo.png "转成水墨画风格"
 python image2image/image2image.py photo.jpg "将背景换成雪山" --output result.png --dir ./output
 ```
 
+### 图生视频
+
+```bash
+# 基本用法（提交后自动轮询，完成即下载 mp4，一般 2~5 分钟）
+python image2video/image2video.py poster.png "固定机位，构图不变。人物发丝随风轻飘，云海缓慢流动"
+
+# 指定模型/时长/分辨率
+python image2video/image2video.py poster.png "..." --model MiniMax-H3 --duration 4 --resolution 2K
+
+# 脚本中断后续查（task_id 在 stderr 第一行，也记在 image2video/tasks.log）
+python image2video/image2video.py --resume task_xxx --output result.mp4
+```
+
+需要网关支持 `POST /v1/video/generations` 异步任务接口（new-api 类网关）；按次计费，图片会上传给模型厂商。
+
 输出结果为 JSON：
 ```json
 {"image_path": "output_images/20260430153012.png", "message": "图片生成成功"}
@@ -78,6 +94,7 @@ python image2image/image2image.py photo.jpg "将背景换成雪山" --output res
 ```bash
 cp -r text2image ~/.claude/skills/text2image
 cp -r image2image ~/.claude/skills/image2image
+cp -r image2video ~/.claude/skills/image2video
 ```
 
 重启 Claude Code 后即可使用：
@@ -85,6 +102,7 @@ cp -r image2image ~/.claude/skills/image2image
 ```
 /text2image 一只在樱花树下打太极的熊猫，水墨画风格，高清
 /image2image output_images/panda.png "将背景替换为雪山"
+/image2video output_images/panda.png "熊猫缓缓收势，樱花花瓣飘落"
 ```
 
 > `.env` 文件放在执行命令时的工作目录，或任意父级目录均可自动识别。
@@ -101,7 +119,10 @@ image_skills/
 ├── text2image/
 │   ├── SKILL.md         # Claude Code 斜杠命令定义
 │   └── text2image.py    # 核心实现 + CLI 入口
-└── image2image/
+├── image2image/
+│   ├── SKILL.md
+│   └── image2image.py
+└── image2video/
     ├── SKILL.md
-    └── image2image.py
+    └── image2video.py
 ```
